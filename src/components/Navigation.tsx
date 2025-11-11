@@ -42,7 +42,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#home" className="flex items-center" onClick={() => scrollToSection("#home")}>
-            <img src={logoWhite} alt="YvesX" className="h-8 w-auto invert dark:invert-0" />
+            <img src={logoWhite} alt="YvesX" className="h-8 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
