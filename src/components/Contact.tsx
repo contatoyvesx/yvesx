@@ -9,7 +9,6 @@ import { toast } from "sonner";
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     whatsapp: "",
     message: "",
   });
@@ -18,14 +17,19 @@ const Contact = () => {
     e.preventDefault();
     
     // WhatsApp message
-    const whatsappMessage = `Olá! Gostaria de fazer um orçamento.%0A%0ANome: ${formData.name}%0AEmail: ${formData.email}%0AWhatsApp: ${formData.whatsapp}%0AMensagem: ${formData.message}`;
+    const whatsappMessage = encodeURIComponent(
+      `Olá! Gostaria de fazer um orçamento.` +
+        `\n\nNome: ${formData.name}` +
+        `\nWhatsApp: ${formData.whatsapp}` +
+        `\nMensagem: ${formData.message}`
+    );
     const whatsappUrl = `https://wa.me/5511999999999?text=${whatsappMessage}`;
     
     window.open(whatsappUrl, "_blank");
     toast.success("Redirecionando para o WhatsApp...");
     
     // Reset form
-    setFormData({ name: "", email: "", whatsapp: "", message: "" });
+    setFormData({ name: "", whatsapp: "", message: "" });
   };
 
   const handleWhatsAppDirect = () => {
@@ -53,17 +57,6 @@ const Contact = () => {
                   placeholder="Seu nome"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <Input
-                  required
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
               </div>
 
