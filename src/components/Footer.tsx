@@ -36,8 +36,8 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Contato</h3>
             <ul className="space-y-2 text-primary-foreground/80">
-              <li>WhatsApp: (11) 99999-9999</li>
-              <li>Email: contato@yvesx.com.br</li>
+              <li>WhatsApp: (11) 94700-6358</li>
+              <li>Email: contato.yvesx@gmail.com</li>
             </ul>
           </div>
         </div>
