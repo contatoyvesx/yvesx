@@ -7,7 +7,7 @@ import { MessageCircle, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const Contact = () => {
-  const whatsappNumber = "5511947006358";
+  const whatsappNumber = "5511921355191";
   const [formData, setFormData] = useState({
     name: "",
     whatsapp: "",
@@ -66,7 +66,7 @@ const Contact = () => {
                 <label className="block text-sm font-medium mb-2">WhatsApp</label>
                 <Input
                   required
-                  placeholder="(11) 94700-6358"
+                  placeholder="(11) 92135-5191"
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                 />
