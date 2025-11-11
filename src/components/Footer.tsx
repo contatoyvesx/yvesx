@@ -1,4 +1,4 @@
-import logoWhite from "@/assets/logo-white.png";
+import logoMark from "@/assets/logo-mark.svg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo and Description */}
           <div className="space-y-4">
-            <img src={logoWhite} alt="YvesX" className="h-8 w-auto" />
+            <img src={logoMark} alt="YvesX" className="h-8 w-auto" />
             <p className="text-primary-foreground/80">
               Transformando ideias em sites profissionais que geram resultados.
             </p>
@@ -36,8 +36,8 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Contato</h3>
             <ul className="space-y-2 text-primary-foreground/80">
-              <li>WhatsApp: (11) 99999-9999</li>
-              <li>Email: contato@yvesx.com.br</li>
+              <li>WhatsApp: (11) 94700-6358</li>
+              <li>Email: contato.yvesx@gmail.com</li>
             </ul>
           </div>
         </div>

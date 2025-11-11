@@ -7,9 +7,9 @@ import { MessageCircle, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const Contact = () => {
+  const whatsappNumber = "5511947006358";
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     whatsapp: "",
     message: "",
   });
@@ -18,18 +18,24 @@ const Contact = () => {
     e.preventDefault();
     
     // WhatsApp message
-    const whatsappMessage = `Olá! Gostaria de fazer um orçamento.%0A%0ANome: ${formData.name}%0AEmail: ${formData.email}%0AWhatsApp: ${formData.whatsapp}%0AMensagem: ${formData.message}`;
-    const whatsappUrl = `https://wa.me/5511999999999?text=${whatsappMessage}`;
-    
-    window.open(whatsappUrl, "_blank");
+    const whatsappMessage = encodeURIComponent(
+      `Olá! Gostaria de fazer um orçamento.` +
+        `\n\nNome: ${formData.name}` +
+        `\nWhatsApp: ${formData.whatsapp}` +
+        `\nMensagem: ${formData.message}`
+    );
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     toast.success("Redirecionando para o WhatsApp...");
-    
+
     // Reset form
-    setFormData({ name: "", email: "", whatsapp: "", message: "" });
+    setFormData({ name: "", whatsapp: "", message: "" });
   };
 
   const handleWhatsAppDirect = () => {
-    window.open("https://wa.me/5511999999999?text=Olá! Gostaria de fazer um orçamento.", "_blank");
+    const defaultMessage = encodeURIComponent("Olá! Gostaria de fazer um orçamento.");
+    window.open(`https://wa.me/${whatsappNumber}?text=${defaultMessage}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -57,21 +63,10 @@ const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <Input
-                  required
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium mb-2">WhatsApp</label>
                 <Input
                   required
-                  placeholder="(11) 99999-9999"
+                  placeholder="(11) 94700-6358"
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                 />
@@ -122,7 +117,7 @@ const Contact = () => {
                 <div className="flex-1">
                   <h3 className="font-semibold mb-2">Email</h3>
                   <p className="text-muted-foreground">
-                    contato@yvesx.com.br
+                    contato.yvesx@gmail.com
                   </p>
                 </div>
               </div>

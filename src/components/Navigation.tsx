@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import logoWhite from "@/assets/logo-white.png";
+import logoMark from "@/assets/logo-mark.svg";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,7 +42,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#home" className="flex items-center" onClick={() => scrollToSection("#home")}>
-            <img src={logoWhite} alt="YvesX" className="h-8 w-auto" />
+            <img src={logoMark} alt="YvesX" className="h-8 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
