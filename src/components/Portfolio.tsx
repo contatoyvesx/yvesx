@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { Card } from "@/components/ui/card";
 
 const portfolioItems = [
@@ -34,6 +36,42 @@ const portfolioItems = [
 ];
 
 const Portfolio = () => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+    if (!isTouchDevice) return;
+
+    const cards = document.querySelectorAll<HTMLElement>("[data-portfolio-card]");
+
+    if (!cards.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target as HTMLElement;
+
+          if (entry.isIntersecting) {
+            target.dataset.active = "true";
+          } else {
+            target.dataset.active = "false";
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => {
+      cards.forEach((card) => observer.unobserve(card));
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <section id="portfolio" className="py-24 bg-secondary/50">
       <div className="container mx-auto px-4">
@@ -48,16 +86,18 @@ const Portfolio = () => {
           {portfolioItems.map((item, index) => (
             <Card
               key={index}
-              className="group overflow-hidden cursor-pointer border-border bg-card hover:shadow-xl transition-all duration-300 animate-scale-in"
+              className="group overflow-hidden cursor-pointer border-border bg-card hover:shadow-xl transition-all duration-300 animate-scale-in data-[active=true]:shadow-xl"
+              data-portfolio-card
+              data-active="false"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                  className="w-full h-full object-cover transition-transform duration-500 grayscale group-hover:scale-110 group-hover:grayscale-0 group-data-[active=true]:scale-110 group-data-[active=true]:grayscale-0"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 transition-opacity duration-300 flex items-end p-6 group-hover:opacity-100 group-data-[active=true]:opacity-100">
                   <div>
                     <p className="text-sm text-muted-foreground">{item.category}</p>
                     <h3 className="text-xl font-semibold">{item.title}</h3>
