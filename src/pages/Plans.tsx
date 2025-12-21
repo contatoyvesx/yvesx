@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Check, Crown, Rocket, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -96,6 +98,7 @@ const faqs = [
 
 const Plans = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
   const navLinks = [
     { name: "Início", href: "/", type: "route" as const },
     { name: "Planos", href: "#planos", type: "anchor" as const },
@@ -170,44 +173,78 @@ const Plans = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {plans.map((plan) => (
-                <Card
-                  key={plan.name}
-                  className={`relative overflow-hidden border border-border p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg ${
-                    plan.highlight
-                      ? "bg-gradient-to-br from-primary/10 via-background to-background border-primary/40"
-                      : "bg-card"
-                  }`}
-                >
-                  {plan.badge && (
-                    <span className="absolute right-6 top-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                      {plan.badge}
-                    </span>
-                  )}
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-semibold">{plan.name}</h3>
-                    <p className="text-muted-foreground">{plan.description}</p>
-                    <div className="text-4xl font-bold">{plan.price}</div>
-                    <ul className="space-y-3">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-center gap-2 text-sm text-foreground/80">
-                          <Check className="h-4 w-4 text-primary" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Button
-                    variant={plan.highlight ? "cta" : "outline"}
-                    size="lg"
-                    className="mt-8 w-full"
-                    onClick={() => handleChoosePlan(plan.id)}
-                    disabled={loadingPlan === plan.id}
+              {plans.map((plan) => {
+                const normalizedCoupon = (couponCodes[plan.id] ?? "").trim().toUpperCase();
+                const hasProDiscount = plan.id === "pro" && normalizedCoupon === "PRO10";
+
+                return (
+                  <Card
+                    key={plan.name}
+                    className={`relative overflow-hidden border border-border p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg ${
+                      plan.highlight
+                        ? "bg-gradient-to-br from-primary/10 via-background to-background border-primary/40"
+                        : "bg-card"
+                    }`}
                   >
-                    {loadingPlan === plan.id ? "Redirecionando..." : `Escolher ${plan.name}`}
-                  </Button>
-                </Card>
-              ))}
+                    {plan.badge && (
+                      <span className="absolute right-6 top-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                        {plan.badge}
+                      </span>
+                    )}
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-semibold">{plan.name}</h3>
+                      <p className="text-muted-foreground">{plan.description}</p>
+                      <div className="space-y-1">
+                        {hasProDiscount && (
+                          <p className="text-sm text-muted-foreground line-through">{plan.price}</p>
+                        )}
+                        <div className="text-4xl font-bold">
+                          {hasProDiscount ? "12x de R$ 200" : plan.price}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {hasProDiscount ? "com cupom PRO10" : "À vista"}
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`coupon-${plan.id}`}>Cupom de desconto</Label>
+                        <Input
+                          id={`coupon-${plan.id}`}
+                          placeholder="Digite seu cupom"
+                          value={couponCodes[plan.id] ?? ""}
+                          onChange={(event) =>
+                            setCouponCodes((prev) => ({
+                              ...prev,
+                              [plan.id]: event.target.value,
+                            }))
+                          }
+                        />
+                        {plan.id === "pro" && (
+                          <p className="text-xs text-muted-foreground">
+                            Use PRO10 para garantir 12x de R$ 200.
+                          </p>
+                        )}
+                      </div>
+                      <ul className="space-y-3">
+                        {plan.features.map((feature) => (
+                          <li key={feature} className="flex items-center gap-2 text-sm text-foreground/80">
+                            <Check className="h-4 w-4 text-primary" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <Button
+                      variant={plan.highlight ? "cta" : "outline"}
+                      size="lg"
+                      className="mt-8 w-full"
+                      onClick={() => handleChoosePlan(plan.id)}
+                      disabled={loadingPlan === plan.id}
+                    >
+                      {loadingPlan === plan.id ? "Redirecionando..." : `Escolher ${plan.name}`}
+                    </Button>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
