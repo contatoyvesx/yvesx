@@ -190,9 +190,9 @@ const Plans = () => {
                 const normalizedCoupon = (couponCodes[plan.id] ?? "").trim().toUpperCase();
                 const appliedCoupon = (appliedCoupons[plan.id] ?? "").trim().toUpperCase();
                 const hasProDiscount = plan.id === "pro" && appliedCoupon === "XPRO20";
-                const priceWithDiscount = hasProDiscount ? 1869.36 : plan.price;
+                const priceWithDiscount = hasProDiscount ? 1889.76 : plan.price;
                 const installmentWithDiscount = hasProDiscount
-                  ? 1869.36 / 12
+                  ? 1889.76 / 12
                   : plan.installment;
 
                 return (

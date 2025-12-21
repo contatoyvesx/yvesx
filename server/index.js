@@ -64,7 +64,7 @@ app.post("/api/pagamento", async (req, res) => {
     const externalReference = `plano=${planKey}|cupom=${couponCode || "nenhum"}|origem=site|ts=${Date.now()}`;
     const unitPrice =
       planKey === "pro" && couponCode === "XPRO20"
-        ? 1869.36
+        ? 1889.76
         : plan.unit_price;
 
     const r = await pref.create({
