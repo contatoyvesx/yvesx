@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -5,9 +6,11 @@ import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Crown, Rocket, ShieldCheck, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 const plans = [
   {
+    id: "basico",
     name: "Essencial",
     price: "R$ 1.490",
     description: "Presença digital elegante para começar forte.",
@@ -22,6 +25,7 @@ const plans = [
     ],
   },
   {
+    id: "pro",
     name: "Profissional",
     price: "R$ 2.490",
     description: "Feito para converter visitantes em clientes.",
@@ -36,6 +40,7 @@ const plans = [
     ],
   },
   {
+    id: "premium",
     name: "Escala",
     price: "R$ 3.990",
     description: "Experiência premium para marcas que crescem.",
@@ -88,6 +93,7 @@ const faqs = [
 ];
 
 const Plans = () => {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const navLinks = [
     { name: "Início", href: "/", type: "route" as const },
     { name: "Planos", href: "#planos", type: "anchor" as const },
@@ -95,6 +101,32 @@ const Plans = () => {
     { name: "FAQ", href: "#faq", type: "anchor" as const },
     { name: "Contato", href: "/#contact", type: "route" as const },
   ];
+
+  const handleChoosePlan = async (planId: string) => {
+    try {
+      setLoadingPlan(planId);
+      const response = await fetch("/api/pagamento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao criar pagamento: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data?.init_point) {
+        throw new Error("Link de pagamento não retornado.");
+      }
+
+      window.location.href = data.init_point;
+    } catch (error) {
+      console.error("Erro ao iniciar pagamento:", error);
+      toast.error("Não foi possível iniciar o pagamento. Tente novamente em instantes.");
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -163,8 +195,14 @@ const Plans = () => {
                       ))}
                     </ul>
                   </div>
-                  <Button variant={plan.highlight ? "cta" : "outline"} size="lg" className="mt-8 w-full" asChild>
-                    <a href="#contato-planos">Escolher {plan.name}</a>
+                  <Button
+                    variant={plan.highlight ? "cta" : "outline"}
+                    size="lg"
+                    className="mt-8 w-full"
+                    onClick={() => handleChoosePlan(plan.id)}
+                    disabled={loadingPlan === plan.id}
+                  >
+                    {loadingPlan === plan.id ? "Redirecionando..." : `Escolher ${plan.name}`}
                   </Button>
                 </Card>
               ))}
