@@ -284,6 +284,32 @@ const Plans = () => {
             </div>
           </div>
         </section>
+        
+        <section className="relative overflow-hidden py-20">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#0f172a_0%,transparent_70%)]" />
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-amber-500">
+                <Crown className="h-4 w-4" />
+                Planos sob medida para cada fase
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold">
+                Escolha o plano ideal para acelerar suas vendas online
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground">
+                Estruturas pensadas para transformar visitantes em clientes, com design premium e alta performance.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <Button variant="cta" size="lg" asChild>
+                  <a href="#contato-planos">Quero um orçamento</a>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <a href="#planos">Ver planos</a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section id="beneficios" className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
