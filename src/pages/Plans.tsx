@@ -142,7 +142,8 @@ const Plans = () => {
     value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
 
   return (
@@ -188,10 +189,10 @@ const Plans = () => {
               {plans.map((plan) => {
                 const normalizedCoupon = (couponCodes[plan.id] ?? "").trim().toUpperCase();
                 const appliedCoupon = (appliedCoupons[plan.id] ?? "").trim().toUpperCase();
-                const hasProDiscount = plan.id === "pro" && appliedCoupon === "PRO20";
-                const priceWithDiscount = hasProDiscount ? plan.price * 0.8 : plan.price;
+                const hasProDiscount = plan.id === "pro" && appliedCoupon === "XPRO20";
+                const priceWithDiscount = hasProDiscount ? 1869.36 : plan.price;
                 const installmentWithDiscount = hasProDiscount
-                  ? plan.installment * 0.8
+                  ? 1869.36 / 12
                   : plan.installment;
 
                 return (
@@ -224,7 +225,7 @@ const Plans = () => {
                           {`12x de ${formatCurrency(installmentWithDiscount)}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {hasProDiscount ? "com cupom PRO20" : "À vista"}
+                          {hasProDiscount ? "com cupom XPRO20" : "À vista"}
                         </p>
                       </div>
                       <div className="space-y-2">
