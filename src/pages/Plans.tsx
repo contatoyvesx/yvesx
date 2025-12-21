@@ -114,10 +114,11 @@ const Plans = () => {
   const handleChoosePlan = async (planId: string) => {
     try {
       setLoadingPlan(planId);
+      const appliedCoupon = (appliedCoupons[planId] ?? "").trim().toUpperCase();
       const response = await fetch("/api/pagamento", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId }),
+        body: JSON.stringify({ plan: planId, coupon: appliedCoupon }),
       });
 
       if (!response.ok) {
