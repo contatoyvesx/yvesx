@@ -3,8 +3,14 @@ import { MercadoPagoConfig, Preference, Payment } from "mercadopago";
 
 const app = express();
 
+/* ======================
+   MIDDLEWARE
+====================== */
 app.use(express.json());
 
+/* ======================
+   PLANOS (BACKEND)
+====================== */
 const plans = {
   basico: {
     title: "Plano Básico",
@@ -23,33 +29,42 @@ const plans = {
   },
 };
 
-const getMercadoPagoClient = () => {
+/* ======================
+   HELPERS
+====================== */
+function getMercadoPagoClient() {
   const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
   if (!accessToken) {
-    throw new Error("MERCADO_PAGO_ACCESS_TOKEN não configurado.");
+    throw new Error("MERCADO_PAGO_ACCESS_TOKEN não configurado");
   }
   return new MercadoPagoConfig({ accessToken });
-};
+}
 
-const getBaseUrl = () => {
-  const baseUrl = process.env.APP_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("APP_BASE_URL não configurado.");
+function getBaseUrl(req) {
+  // fallback automático se APP_BASE_URL não existir
+  if (process.env.APP_BASE_URL) {
+    return process.env.APP_BASE_URL.replace(/\/$/, "");
   }
-  return baseUrl.replace(/\/$/, "");
-};
 
+  const protocol = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers.host;
+  return `${protocol}://${host}`;
+}
+
+/* ======================
+   CRIAR PAGAMENTO
+====================== */
 app.post("/api/pagamento", async (req, res) => {
   try {
     const { plan } = req.body;
     const selectedPlan = plans[plan];
 
     if (!selectedPlan) {
-      return res.status(400).json({ error: "Plano inválido." });
+      return res.status(400).json({ error: "Plano inválido" });
     }
 
     const preference = new Preference(getMercadoPagoClient());
-    const baseUrl = getBaseUrl();
+    const baseUrl = getBaseUrl(req);
 
     const response = await preference.create({
       body: {
@@ -63,12 +78,15 @@ app.post("/api/pagamento", async (req, res) => {
           },
         ],
         external_reference: plan,
+
         back_urls: {
           success: `${baseUrl}/pagamento/sucesso`,
           failure: `${baseUrl}/pagamento/falha`,
           pending: `${baseUrl}/pagamento/pendente`,
         },
+
         notification_url: `${baseUrl}/api/webhook`,
+
         payment_methods: {
           installments: 12,
         },
@@ -76,46 +94,61 @@ app.post("/api/pagamento", async (req, res) => {
       },
     });
 
-    return res.status(201).json({ init_point: response.init_point });
+    return res.status(201).json({
+      init_point: response.init_point,
+    });
   } catch (error) {
-    console.error("Erro ao criar preferência de pagamento:", error);
-    return res.status(500).json({ error: "Não foi possível criar a preferência." });
+    console.error("Erro ao criar pagamento:", error);
+    return res.status(500).json({ error: "Erro ao criar pagamento" });
   }
 });
 
+/* ======================
+   WEBHOOK
+====================== */
 app.post("/api/webhook", async (req, res) => {
   try {
-    const { topic, type, id, data } = req.query;
-    const bodyData = req.body?.data;
-    const paymentId = id ?? data?.id ?? bodyData?.id ?? req.body?.id;
-    const eventType = type ?? topic ?? req.body?.type;
+    const paymentId =
+      req.query.id ??
+      req.query["data.id"] ??
+      req.body?.data?.id ??
+      req.body?.id;
 
-    if (eventType !== "payment" || !paymentId) {
+    if (!paymentId) {
       return res.sendStatus(200);
     }
 
     const paymentClient = new Payment(getMercadoPagoClient());
     const payment = await paymentClient.get({ id: String(paymentId) });
-    const plan = payment.external_reference ?? "desconhecido";
 
-    console.log("Pagamento atualizado:", {
+    console.log("Webhook Mercado Pago:", {
       id: payment.id,
       status: payment.status,
-      plan,
       status_detail: payment.status_detail,
+      plan: payment.external_reference,
       amount: payment.transaction_amount,
-      payer_email: payment.payer?.email,
+      payer: payment.payer?.email,
     });
 
     return res.sendStatus(200);
   } catch (error) {
-    console.error("Erro ao processar webhook Mercado Pago:", error);
+    console.error("Erro no webhook:", error);
     return res.sendStatus(200);
   }
 });
 
-const port = Number(process.env.PORT ?? 3333);
+/* ======================
+   HEALTH CHECK (OPCIONAL)
+====================== */
+app.get("/api/health", (_, res) => {
+  res.json({ status: "ok" });
+});
 
-app.listen(port, () => {
-  console.log(`Servidor Mercado Pago ativo na porta ${port}`);
+/* ======================
+   START SERVER
+====================== */
+const PORT = Number(process.env.PORT || 3000);
+
+app.listen(PORT, () => {
+  console.log("Servidor Mercado Pago ativo na porta", PORT);
 });
