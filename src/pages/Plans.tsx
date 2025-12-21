@@ -14,7 +14,8 @@ const plans = [
   {
     id: "basico",
     name: "Essencial",
-    price: "R$ 1.490",
+    price: 1500,
+    installment: 125,
     description: "Site personalizado para apresentar sua marca com clareza.",
     highlight: false,
     badge: "",
@@ -29,7 +30,8 @@ const plans = [
   {
     id: "pro",
     name: "Profissional",
-    price: "R$ 2.490",
+    price: 3000,
+    installment: 250,
     description: "Tudo o que você precisa para rodar sem preocupação técnica.",
     highlight: true,
     badge: "Mais escolhido",
@@ -45,7 +47,8 @@ const plans = [
   {
     id: "premium",
     name: "Escala",
-    price: "R$ 3.990",
+    price: 6600,
+    installment: 550,
     description: "Estrutura completa para vender online e expandir.",
     highlight: false,
     badge: "",
@@ -99,6 +102,7 @@ const faqs = [
 const Plans = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
+  const [appliedCoupons, setAppliedCoupons] = useState<Record<string, string>>({});
   const navLinks = [
     { name: "Início", href: "/", type: "route" as const },
     { name: "Planos", href: "#planos", type: "anchor" as const },
@@ -110,10 +114,11 @@ const Plans = () => {
   const handleChoosePlan = async (planId: string) => {
     try {
       setLoadingPlan(planId);
+      const appliedCoupon = (appliedCoupons[planId] ?? "").trim().toUpperCase();
       const response = await fetch("/api/pagamento", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId }),
+        body: JSON.stringify({ plan: planId, coupon: appliedCoupon }),
       });
 
       if (!response.ok) {
@@ -133,15 +138,23 @@ const Plans = () => {
     }
   };
 
+  const formatCurrency = (value: number) =>
+    value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation links={navLinks} />
       <main className="pt-24">
         <section className="relative overflow-hidden py-20">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#f1f5f9_0%,transparent_45%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#0f172a_0%,transparent_70%)]" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-amber-500">
                 <Crown className="h-4 w-4" />
                 Planos sob medida para cada fase
               </div>
@@ -152,12 +165,12 @@ const Plans = () => {
                 Estruturas pensadas para transformar visitantes em clientes, com design premium e alta performance.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button variant="cta" size="lg" asChild>
-                <a href="#contato-planos">Quero um orçamento</a>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <a href="#planos">Ver planos</a>
-              </Button>
+                <Button variant="cta" size="lg" asChild>
+                  <a href="#contato-planos">Quero um orçamento</a>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <a href="#planos">Ver planos</a>
+                </Button>
               </div>
             </div>
           </div>
@@ -172,10 +185,15 @@ const Plans = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
               {plans.map((plan) => {
                 const normalizedCoupon = (couponCodes[plan.id] ?? "").trim().toUpperCase();
-                const hasProDiscount = plan.id === "pro" && normalizedCoupon === "PRO10";
+                const appliedCoupon = (appliedCoupons[plan.id] ?? "").trim().toUpperCase();
+                const hasProDiscount = plan.id === "pro" && appliedCoupon === "XPRO20";
+                const priceWithDiscount = hasProDiscount ? 1889.76 : plan.price;
+                const installmentWithDiscount = hasProDiscount
+                  ? 1889.76 / 12
+                  : plan.installment;
 
                 return (
                   <Card
@@ -196,33 +214,51 @@ const Plans = () => {
                       <p className="text-muted-foreground">{plan.description}</p>
                       <div className="space-y-1">
                         {hasProDiscount && (
-                          <p className="text-sm text-muted-foreground line-through">{plan.price}</p>
+                          <p className="text-sm text-muted-foreground line-through">
+                            {formatCurrency(plan.price)}
+                          </p>
                         )}
                         <div className="text-4xl font-bold">
-                          {hasProDiscount ? "12x de R$ 200" : plan.price}
+                          {formatCurrency(priceWithDiscount)}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {hasProDiscount ? "com cupom PRO10" : "À vista"}
+                          {`12x de ${formatCurrency(installmentWithDiscount)}`}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {hasProDiscount ? "com cupom XPRO20" : "À vista"}
                         </p>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor={`coupon-${plan.id}`}>Cupom de desconto</Label>
-                        <Input
-                          id={`coupon-${plan.id}`}
-                          placeholder="Digite seu cupom"
-                          value={couponCodes[plan.id] ?? ""}
-                          onChange={(event) =>
-                            setCouponCodes((prev) => ({
-                              ...prev,
-                              [plan.id]: event.target.value,
-                            }))
-                          }
-                        />
-                        {plan.id === "pro" && (
-                          <p className="text-xs text-muted-foreground">
-                            Use PRO10 para garantir 12x de R$ 200.
-                          </p>
-                        )}
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                          <Input
+                            id={`coupon-${plan.id}`}
+                            placeholder="Digite seu cupom"
+                            value={couponCodes[plan.id] ?? ""}
+                            onChange={(event) =>
+                              setCouponCodes((prev) => ({
+                                ...prev,
+                                [plan.id]: event.target.value,
+                              }))
+                            }
+                          />
+                          {plan.id === "pro" && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="sm:h-10"
+                              onClick={() =>
+                                setAppliedCoupons((prev) => ({
+                                  ...prev,
+                                  [plan.id]: normalizedCoupon,
+                                }))
+                              }
+                            >
+                              Aplicar
+                            </Button>
+                          )}
+                        </div>
                       </div>
                       <ul className="space-y-3">
                         {plan.features.map((feature) => (

@@ -20,17 +20,17 @@ const plans = {
   basico: {
     title: "Plano Essencial",
     description: "Site personalizado em uma única página.",
-    unit_price: 1490,
+    unit_price: 1500,
   },
   pro: {
     title: "Plano Profissional",
     description: "Site com domínio, hospedagem e manutenção.",
-    unit_price: 2490,
+    unit_price: 3000,
   },
   premium: {
     title: "Plano Escala",
     description: "Site completo com pagamentos e e-commerce.",
-    unit_price: 3990,
+    unit_price: 6600,
   },
 };
 
@@ -50,6 +50,7 @@ function baseUrl(req) {
 app.post("/api/pagamento", async (req, res) => {
   try {
     const planKey = req.body.plan;
+    const couponCode = String(req.body.coupon || "").trim().toUpperCase();
     const plan = plans[planKey];
 
     if (!plan) {
@@ -60,7 +61,11 @@ app.post("/api/pagamento", async (req, res) => {
     const url = baseUrl(req);
 
     // 🔑 Identificador da compra
-    const externalReference = `plano=${planKey}|origem=site|ts=${Date.now()}`;
+    const externalReference = `plano=${planKey}|cupom=${couponCode || "nenhum"}|origem=site|ts=${Date.now()}`;
+    const unitPrice =
+      planKey === "pro" && couponCode === "XPRO20"
+        ? 1889.76
+        : plan.unit_price;
 
     const r = await pref.create({
       body: {
@@ -69,7 +74,7 @@ app.post("/api/pagamento", async (req, res) => {
             title: plan.title,
             description: plan.description,
             quantity: 1,
-            unit_price: plan.unit_price,
+            unit_price: unitPrice,
             currency_id: "BRL",
           },
         ],
