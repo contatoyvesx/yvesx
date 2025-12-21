@@ -187,10 +187,10 @@ const Plans = () => {
               {plans.map((plan) => {
                 const normalizedCoupon = (couponCodes[plan.id] ?? "").trim().toUpperCase();
                 const appliedCoupon = (appliedCoupons[plan.id] ?? "").trim().toUpperCase();
-                const hasProDiscount = plan.id === "pro" && appliedCoupon === "PRO10";
-                const priceWithDiscount = hasProDiscount ? plan.price * 0.9 : plan.price;
+                const hasProDiscount = plan.id === "pro" && appliedCoupon === "PRO20";
+                const priceWithDiscount = hasProDiscount ? plan.price * 0.8 : plan.price;
                 const installmentWithDiscount = hasProDiscount
-                  ? plan.installment * 0.9
+                  ? plan.installment * 0.8
                   : plan.installment;
 
                 return (
@@ -223,7 +223,7 @@ const Plans = () => {
                           {`12x de ${formatCurrency(installmentWithDiscount)}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {hasProDiscount ? "com cupom PRO10" : "À vista"}
+                          {hasProDiscount ? "com cupom PRO20" : "À vista"}
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -257,11 +257,6 @@ const Plans = () => {
                             </Button>
                           )}
                         </div>
-                        {plan.id === "pro" && (
-                          <p className="text-xs text-muted-foreground">
-                            Use PRO10 para garantir 10% de desconto.
-                          </p>
-                        )}
                       </div>
                       <ul className="space-y-3">
                         {plan.features.map((feature) => (
