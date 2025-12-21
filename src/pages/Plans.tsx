@@ -141,7 +141,7 @@ const Plans = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#f1f5f9_0%,transparent_45%)]" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-amber-500">
                 <Crown className="h-4 w-4" />
                 Planos sob medida para cada fase
               </div>
