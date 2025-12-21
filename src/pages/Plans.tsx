@@ -115,12 +115,12 @@ const Plans = () => {
                 Estruturas pensadas para transformar visitantes em clientes, com design premium e alta performance.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <Button variant="cta" size="lg" asChild>
-                  <Link to="/#contact">Quero um orçamento</Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <a href="#planos">Ver planos</a>
-                </Button>
+              <Button variant="cta" size="lg" asChild>
+                <a href="#contato-planos">Quero um orçamento</a>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <a href="#planos">Ver planos</a>
+              </Button>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ const Plans = () => {
                     </ul>
                   </div>
                   <Button variant={plan.highlight ? "cta" : "outline"} size="lg" className="mt-8 w-full" asChild>
-                    <Link to="/#contact">Escolher {plan.name}</Link>
+                    <a href="#contato-planos">Escolher {plan.name}</a>
                   </Button>
                 </Card>
               ))}
@@ -240,7 +240,7 @@ const Plans = () => {
                     ))}
                   </ul>
                   <Button variant="outline" size="lg" className="w-full" asChild>
-                    <Link to="/#contact">Quero falar sobre extras</Link>
+                    <a href="#contato-planos">Quero falar sobre extras</a>
                   </Button>
                 </div>
               </Card>
@@ -265,7 +265,7 @@ const Plans = () => {
           </div>
         </section>
 
-        <section className="py-20 bg-background">
+        <section id="contato-planos" className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">Pronto para lançar seu novo site?</h2>
@@ -273,8 +273,11 @@ const Plans = () => {
                 Conte com um time que entende seu negócio e entrega resultados visíveis.
               </p>
               <Button variant="cta" size="lg" asChild>
-                <Link to="/#contact">Agendar conversa</Link>
+                <a href="#planos">Agendar conversa</a>
               </Button>
+              <p className="text-sm text-muted-foreground">
+                Prefere falar agora? <Link to="/#contact" className="text-primary font-medium">Ir para contato</Link>
+              </p>
             </div>
           </div>
         </section>
