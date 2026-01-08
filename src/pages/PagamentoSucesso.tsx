@@ -21,7 +21,7 @@ const PagamentoSucesso = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#0f172a_0%,transparent_70%)]" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center space-y-6 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-amber-500">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-emerald-500">
                 <CheckCircle2 className="h-4 w-4" />
                 Pagamento confirmado
               </div>
