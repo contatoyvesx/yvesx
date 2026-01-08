@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
@@ -103,6 +103,7 @@ const Plans = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [couponCodes, setCouponCodes] = useState<Record<string, string>>({});
   const [appliedCoupons, setAppliedCoupons] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
   const navLinks = [
     { name: "Início", href: "/", type: "route" as const },
     { name: "Planos", href: "#planos", type: "anchor" as const },
@@ -130,7 +131,12 @@ const Plans = () => {
         throw new Error("Link de pagamento não retornado.");
       }
 
-      window.location.href = data.init_point;
+      if (data.init_point.startsWith("http")) {
+        window.location.href = data.init_point;
+        return;
+      }
+
+      navigate(data.init_point);
     } catch (error) {
       console.error("Erro ao iniciar pagamento:", error);
       toast.error("Não foi possível iniciar o pagamento. Tente novamente em instantes.");
